@@ -1,1 +1,2 @@
-# Two player chess from the command line, written in Ruby
+# Two player chess
+Play from the command line. Written in Ruby
