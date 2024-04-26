@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'piece'
+require_relative 'piece'
 
 # Pawn
 class Pawn < Piece
@@ -9,7 +9,7 @@ class Pawn < Piece
   def initialize(team)
     super()
     @team = team
-    @mark = if @team == 'white'
+    @mark = if @team == @white
               "\u2659"
             else
               "\u265F"
@@ -22,4 +22,6 @@ class Pawn < Piece
     first_move = false if @position != @board[6]
     [0, 2] << moves if first_move
   end
+
+ 
 end
