@@ -12,7 +12,7 @@ class Pawn < Piece
   def initialize(team)
     super()
     @team = team
-    @mark = if @team == @white
+    @mark = if @team == 'white'
               "\u2659"
             else
               "\u265F"

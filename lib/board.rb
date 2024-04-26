@@ -2,7 +2,7 @@
 
 # Gameboard
 class Board
-  attr_accessor :board, :white, :black
+  attr_accessor :board, :white, :black, :pawns_w, :pawns_b
 
   def initialize
     @board = Array.new(8) { Array.new(8) { '_' } }
@@ -11,15 +11,17 @@ class Board
   end
 
   def populate_pawns
-    8.times do
-      Pawn.new(@white)
-      Pawn.new(@black)
+    @pawns_w = {}
+    @pawns_b = {}
+    8.times do |n|
+      @pawns_w["pawn#{n}"] = Pawn.new('white')
+      @pawns_b["pawn#{n}"] = Pawn.new('black')
     end
     @board[1].each_index do |col|
-      @board[1][col] = "\u2659"
+      @board[1][col] = pawns_w['pawn0'].mark
     end
     @board[6].each_index do |col|
-      @board[6][col] = "\u265F"
+      @board[6][col] = pawns_b['pawn0'].mark
     end
   end
 
