@@ -9,6 +9,7 @@ class Board
     @units_b = {}
     @units_w = {}
     populate_pawns
+    populate_kings
     show_board
   end
 
@@ -17,18 +18,23 @@ class Board
       @units_w["pawn#{n}"] = Pawn.new('white')
       @units_b["pawn#{n}"] = Pawn.new('black')
     end
-    @board[1].each_index do |col|
-      @units_w["pawn#{col}"].position = [1, col]
-      @board[1][col] = @units_w['pawn0'].mark
-    end
     @board[6].each_index do |col|
-      @units_b["pawn#{col}"].position = [6, col]
-      @board[6][col] = @units_b['pawn0'].mark
+      @units_w["pawn#{col}"].position = [6, col]
+      @board[6][col] = @units_w['pawn0'].mark
+    end
+    @board[1].each_index do |col|
+      @units_b["pawn#{col}"].position = [1, col]
+      @board[1][col] = @units_b['pawn0'].mark
     end
   end
 
   def populate_kings
-
+    @units_w['king'] = King.new('white')
+    @units_w['king'].position = [0, 4]
+    @board[7][4] = @units_w['king'].mark
+    @units_b['king'] = King.new('black')
+    @units_b['king'].position = [0, 3]
+    @board[0][3] = @units_b['king'].mark
   end
 
   def show_board

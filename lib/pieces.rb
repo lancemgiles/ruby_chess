@@ -13,9 +13,9 @@ class Pawn < Piece
     super()
     @team = team
     @mark = if @team == 'white'
-              "\u2659"
-            else
               "\u265F"
+            else
+              "\u2659"
             end
     @first_move = true
   end
@@ -44,9 +44,9 @@ class Knight < Piece
     super()
     @team = team
     @mark = if @team == :white
-              "\u2658"
-            else
               "\u265E"
+            else
+              "\u2658"
             end
   end
 end
@@ -57,9 +57,9 @@ class Bishop < Piece
     super()
     @team = team
     @mark = if @team == :white
-              "\u2657"
-            else
               "\u265D"
+            else
+              "\u2657"
             end
   end
 end
@@ -70,9 +70,9 @@ class Rook < Piece
     super()
     @team = team
     @mark = if @team == :white
-              "\u2656"
-            else
               "\u265C"
+            else
+              "\u2656"
             end
   end
 end
@@ -83,9 +83,9 @@ class Queen < Piece
     super()
     @team = team
     @mark = if @team == :white
-              "\u2655"
-            else
               "\u265B"
+            else
+              "\u2655"
             end
   end
 end
@@ -95,10 +95,10 @@ class King < Piece
   def initialize(team)
     super()
     @team = team
-    @mark = if @team == :white
-              "\u2654"
-            else
+    @mark = if @team == 'white'
               "\u265A"
+            else
+              "\u2654"
             end
   end
 end
