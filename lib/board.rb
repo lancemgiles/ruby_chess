@@ -18,10 +18,12 @@ class Board
       @pawns_b["pawn#{n}"] = Pawn.new('black')
     end
     @board[1].each_index do |col|
-      @board[1][col] = pawns_w['pawn0'].mark
+      @pawns_w["pawn#{col}"].position = [1, col]
+      @board[1][col] = @pawns_w['pawn0'].mark
     end
     @board[6].each_index do |col|
-      @board[6][col] = pawns_b['pawn0'].mark
+      @pawns_b["pawn#{col}"].position = [6, col]
+      @board[6][col] = @pawns_b['pawn0'].mark
     end
   end
 
