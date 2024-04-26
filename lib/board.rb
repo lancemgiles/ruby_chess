@@ -25,9 +25,9 @@ class Board
 
   def show_board
     @board.each_with_index do |row, index|
-      puts "#{index}|#{row.join('|')}|"
+      puts "\t\t#{index}|#{row.join('|')}|"
     end
-    puts '  A B C D E F G H'
+    puts "\t\t  A B C D E F G H"
   end
 
   def valid_pos?(pos)
