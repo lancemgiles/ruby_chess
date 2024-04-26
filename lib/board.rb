@@ -2,29 +2,33 @@
 
 # Gameboard
 class Board
-  attr_accessor :board, :white, :black, :pawns_w, :pawns_b
+  attr_accessor :board, :white, :black, :units_w, :units_b
 
   def initialize
     @board = Array.new(8) { Array.new(8) { '_' } }
+    @units_b = {}
+    @units_w = {}
     populate_pawns
     show_board
   end
 
   def populate_pawns
-    @pawns_w = {}
-    @pawns_b = {}
     8.times do |n|
-      @pawns_w["pawn#{n}"] = Pawn.new('white')
-      @pawns_b["pawn#{n}"] = Pawn.new('black')
+      @units_w["pawn#{n}"] = Pawn.new('white')
+      @units_b["pawn#{n}"] = Pawn.new('black')
     end
     @board[1].each_index do |col|
-      @pawns_w["pawn#{col}"].position = [1, col]
-      @board[1][col] = @pawns_w['pawn0'].mark
+      @units_w["pawn#{col}"].position = [1, col]
+      @board[1][col] = @units_w['pawn0'].mark
     end
     @board[6].each_index do |col|
-      @pawns_b["pawn#{col}"].position = [6, col]
-      @board[6][col] = @pawns_b['pawn0'].mark
+      @units_b["pawn#{col}"].position = [6, col]
+      @board[6][col] = @units_b['pawn0'].mark
     end
+  end
+
+  def populate_kings
+
   end
 
   def show_board
@@ -39,5 +43,3 @@ class Board
     row >= 0 && row < 8 && col >= 0 && col < 8
   end
 end
-
-
