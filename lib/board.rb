@@ -14,26 +14,18 @@ class Board
   end
 
   def populate_pawns
-    8.times do |n|
-      @units_w["pawn#{n}"] = Pawn.new('white')
-      @units_b["pawn#{n}"] = Pawn.new('black')
-    end
-    @board[6].each_index do |col|
-      @units_w["pawn#{col}"].position = [6, col]
-      @board[6][col] = @units_w['pawn0'].mark
-    end
-    @board[1].each_index do |col|
-      @units_b["pawn#{col}"].position = [1, col]
-      @board[1][col] = @units_b['pawn0'].mark
+    8.times do |col|
+      @units_w["pawn#{col}"] = Pawn.new('white', [6, col])
+      @board[6][col] = @units_w["pawn#{col}"].mark
+      @units_b["pawn#{col}"] = Pawn.new('black', [1, col])
+      @board[1][col] = @units_b["pawn#{col}"].mark
     end
   end
 
   def populate_kings
-    @units_w['king'] = King.new('white')
-    @units_w['king'].position = [0, 4]
+    @units_w['king'] = King.new('white', [7, 4])
     @board[7][4] = @units_w['king'].mark
-    @units_b['king'] = King.new('black')
-    @units_b['king'].position = [0, 3]
+    @units_b['king'] = King.new('black', [0, 3])
     @board[0][3] = @units_b['king'].mark
   end
 

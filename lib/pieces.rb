@@ -3,15 +3,19 @@
 # Class for comment elements of all pieces
 class Piece
   attr_accessor :position, :mark, :team
+
+  def initialize(team, position)
+    @team = team
+    @position = position
+  end
 end
 
 # Pawns
 class Pawn < Piece
   attr_accessor :first_move
 
-  def initialize(team)
-    super()
-    @team = team
+  def initialize(team, position)
+    super
     @mark = if @team == 'white'
               "\u265F"
             else
@@ -92,9 +96,8 @@ end
 
 # King
 class King < Piece
-  def initialize(team)
-    super()
-    @team = team
+  def initialize(team, position)
+    super
     @mark = if @team == 'white'
               "\u265A"
             else
