@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-# require_relative '../lib/piece'
-# require_relative 'king'
-# require_relative 'queen'
-# require_relative 'rook'
-# require_relative 'knight'
-# require_relative 'bishop'
-require_relative 'pawn'
-
 # Gameboard
 class Board
   attr_accessor :board, :white, :black
@@ -23,11 +15,11 @@ class Board
       Pawn.new(@white)
       Pawn.new(@black)
     end
-    @board[6].each_index do |col|
-      @board[6][col] = "\u2659"
-    end
     @board[1].each_index do |col|
-      @board[1][col] = "\u265F"
+      @board[1][col] = "\u2659"
+    end
+    @board[6].each_index do |col|
+      @board[6][col] = "\u265F"
     end
   end
 
@@ -44,4 +36,4 @@ class Board
   end
 end
 
-game = Board.new
+
