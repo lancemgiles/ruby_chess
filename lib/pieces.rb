@@ -44,10 +44,9 @@ class Knight < Piece
     [-2, -1]
   ].freeze
 
-  def initialize(team)
-    super()
-    @team = team
-    @mark = if @team == :white
+  def initialize(team, position)
+    super
+    @mark = if @team == 'white'
               "\u265E"
             else
               "\u2658"
@@ -57,10 +56,9 @@ end
 
 # Bishop
 class Bishop < Piece
-  def initialize(team)
-    super()
-    @team = team
-    @mark = if @team == :white
+  def initialize(team, position)
+    super
+    @mark = if @team == 'white'
               "\u265D"
             else
               "\u2657"
@@ -70,10 +68,9 @@ end
 
 # Rook
 class Rook < Piece
-  def initialize(team)
-    super()
-    @team = team
-    @mark = if @team == :white
+  def initialize(team, position)
+    super
+    @mark = if @team == 'white'
               "\u265C"
             else
               "\u2656"
@@ -83,10 +80,9 @@ end
 
 # Queen
 class Queen < Piece
-  def initialize(team)
-    super()
-    @team = team
-    @mark = if @team == :white
+  def initialize(team, position)
+    super
+    @mark = if @team == 'white'
               "\u265B"
             else
               "\u2655"
