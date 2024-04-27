@@ -123,18 +123,17 @@ class Board
   attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn
 
   def initialize
+    @board = Array.new(8) { Array.new(8) { '_' } }
+    @units_b = {}
+    @units_w = {}
+    @turn = 1
+    @state = [@board, @units_b, @units_w, @turn]
+    populate
+    show_board
+    intro
     if File.exist?('save.yml')
-      puts 'Save file detected. If you wish to start a new game, delete or rename the save file.'
+      puts 'Save file detected.'
       self.load
-    else
-      @board = Array.new(8) { Array.new(8) { '_' } }
-      @units_b = {}
-      @units_w = {}
-      @turn = 1
-      @state = [@board, @units_b, @units_w, @turn]
-      populate
-      show_board
-      intro
     end
   end
 
