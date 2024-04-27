@@ -34,16 +34,60 @@ module UI
     puts "\tEnter save, load, or quit to do those actions."
     puts "\tThis works more like a digital chess board with pieces rather than a video game!"
     puts "\tThat means that aside from checking if moves are legal and for winning conditions,"
-    puts "\tit is on the player to play properly."
+    puts "\tit is on the players to play honestly."
     puts
     puts "\tPlayer 1 is white and goes first."
   end
 
   def input_coords
-    gets.chomp
+    print 'Enter coordinates: '
+    coords = gets.chomp
+    abort 'Quitting game...' if coords == 'quit'
+    save(@state) if coords == 'save'
+    if coords == 'load'
+      load
+    end
+    coords
+  end
+
+  def save(state)
+    update_state(state)
+    puts 'Save game and quit playing? (y/n)'
+    ans = gets.downcase.chomp
+    return unless ans == 'y'
+
+    File.open('save.yml', 'w') { |file| YAML.dump(state, file) }
+    abort 'Game saved.'
+  end
+
+  def update_state(state)
+    state[0] = @board
+    state[1] = @units_b
+    state[2] = @units_w
+  end
+
+  def load
+    puts 'Load saved game? (y/n)'
+    ans = gets.downcase.chomp[0]
+    return unless ans == 'y'
+
+    @state = YAML.load_file('save.yml', aliases: true, permitted_classes: [Board, Piece, Pawn, Knight, Bishop, Rook, Queen, King, Symbol])
+    @board = @state[0]
+    @units_b = state[1]
+    @units_w = state[2]
+    update_game
   end
 
   def move(start, target)
+    if start == 'save' ||
+       start == 'load'
+      start = input_coords
+    elsif target == 'save' ||
+          target == 'load'
+      target = input_coords
+    end
+    start = start.split('')
+    target = target.split('')
     start_x = +start[0].to_i
     start_y = +start[1]
     target_x = +target[0].to_i
@@ -69,12 +113,13 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state
 
   def initialize
     @board = Array.new(8) { Array.new(8) { '_' } }
     @units_b = {}
     @units_w = {}
+    @state = [@board, @units_b, @units_w]
     populate
     show_board
     intro
@@ -139,8 +184,16 @@ class Board
     @board[0][3] = BLACK[:king]
   end
 
+  def update_game
+    @state = [@board, @units_b, @units_w]
+    show_board
+  end
+
   def play
-    move(input_coords, input_coords)
+    loop do
+      move(input_coords, input_coords)
+      update_game
+    end
   end
 
   def valid_pos?(pos)
