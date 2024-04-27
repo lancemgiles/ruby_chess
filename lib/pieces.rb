@@ -16,11 +16,6 @@ class Pawn < Piece
 
   def initialize(team, position)
     super
-    @mark = if @team == :white
-              "\u265F"
-            else
-              "\u2659"
-            end
     @first_move = true
   end
 
@@ -44,51 +39,18 @@ class Knight < Piece
     [-2, 1],
     [-2, -1]
   ].freeze
-
-  def initialize(team, position)
-    super
-    @mark = if @team == :white
-              "\u265E"
-            else
-              "\u2658"
-            end
-  end
 end
 
 # Bishop
 class Bishop < Piece
-  def initialize(team, position)
-    super
-    @mark = if @team == :white
-              "\u265D"
-            else
-              "\u2657"
-            end
-  end
 end
 
 # Rook
 class Rook < Piece
-  def initialize(team, position)
-    super
-    @mark = if @team == :white
-              "\u265C"
-            else
-              "\u2656"
-            end
-  end
 end
 
 # Queen
 class Queen < Piece
-  def initialize(team, position)
-    super
-    @mark = if @team == :white
-              "\u265B"
-            else
-              "\u2655"
-            end
-  end
 end
 
 # King
@@ -103,13 +65,4 @@ class King < Piece
     [-1, 1],
     [-1, -1]
   ].freeze
-
-  def initialize(team, position)
-    super
-    @mark = if @team == :white
-              "\u265A"
-            else
-              "\u2654"
-            end
-  end
 end
