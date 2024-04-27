@@ -2,7 +2,7 @@
 
 # Class for comment elements of all pieces
 class Piece
-  attr_accessor :piece, :mark, :team, :move_set, :position
+  attr_accessor :mark, :team, :move_set, :position
 
   def initialize(team, position)
     @team = team

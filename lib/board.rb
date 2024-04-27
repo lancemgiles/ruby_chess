@@ -18,6 +18,7 @@ module UI
     queen: "\u2655",
     king: "\u2654"
   }.freeze
+
   def show_board
     @board.each_with_index do |row, index|
       puts "\t\t#{index}|#{row.join('|')}|"
@@ -28,8 +29,8 @@ module UI
   def intro
     puts "\tPlayer 1 is white."
     puts "\tTo move, first enter the coordinates of the piece you wish to move."
-    puts "\tFor example, select a knight with 7g and press enter."
-    puts "\tThen enter the target location."
+    puts "\tFor example, move a knight: 7g, 5f"
+    puts "\tEnter save, load, or quit to do those actions."
   end
 end
 
