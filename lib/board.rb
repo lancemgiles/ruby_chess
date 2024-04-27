@@ -24,6 +24,11 @@ module UI
     @board.each_with_index do |row, index|
       puts "\t\t#{index}|#{row.join('|')}|"
     end
+    if @turn.odd?
+      puts "\tWhite's turn"
+    else
+      puts "\tBlack's turn"
+    end
   end
 
   def intro
@@ -64,6 +69,7 @@ module UI
     state[0] = @board
     state[1] = @units_b
     state[2] = @units_w
+    state[3] = @turn
   end
 
   def load
@@ -75,6 +81,7 @@ module UI
     @board = @state[0]
     @units_b = state[1]
     @units_w = state[2]
+    @turn = state[3]
     update_game
   end
 
@@ -113,16 +120,22 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b, :state
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn
 
   def initialize
-    @board = Array.new(8) { Array.new(8) { '_' } }
-    @units_b = {}
-    @units_w = {}
-    @state = [@board, @units_b, @units_w]
-    populate
-    show_board
-    intro
+    if File.exist?('save.yml')
+      puts 'Save file detected. If you wish to start a new game, delete or rename the save file.'
+      self.load
+    else
+      @board = Array.new(8) { Array.new(8) { '_' } }
+      @units_b = {}
+      @units_w = {}
+      @turn = 1
+      @state = [@board, @units_b, @units_w, @turn]
+      populate
+      show_board
+      intro
+    end
   end
 
   def populate
@@ -185,13 +198,14 @@ class Board
   end
 
   def update_game
-    @state = [@board, @units_b, @units_w]
+    @state = [@board, @units_b, @units_w, @turn]
     show_board
   end
 
   def play
     loop do
       move(input_coords, input_coords)
+      @turn += 1
       update_game
     end
   end
