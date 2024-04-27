@@ -39,6 +39,10 @@ module UI
     puts "\tPlayer 1 is white and goes first."
   end
 
+  def input_coords
+    gets.chomp
+  end
+
   def move(start, target)
     start_x = +start[0].to_i
     start_y = +start[1]
@@ -135,7 +139,9 @@ class Board
     @board[0][3] = BLACK[:king]
   end
 
- 
+  def play
+    move(input_coords, input_coords)
+  end
 
   def valid_pos?(pos)
     row, col = pos

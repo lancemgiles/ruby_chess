@@ -5,5 +5,5 @@ require './lib/board'
 require './lib/player'
 
 game = Board.new
-game.move('7g', '5f')
+game.play
 game.show_board
