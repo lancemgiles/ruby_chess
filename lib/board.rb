@@ -38,6 +38,28 @@ module UI
     puts
     puts "\tPlayer 1 is white and goes first."
   end
+
+  def move(start, target)
+    start_x = +start[0].to_i
+    start_y = +start[1]
+    target_x = +target[0].to_i
+    target_y = +target[1]
+    ('a'..'h').to_a.each_with_index do |letter, index|
+      if start_y == letter
+        start_y = index.to_s
+        start_y = start_y.to_i
+      end
+      if target_y == letter
+        target_y = index.to_s
+        target_y = target_y.to_i
+      end
+    end
+    # need to check if input is valid
+    # need to confirm selected piece is not empty
+    piece = @board[start_x][start_y]
+    @board[target_x][target_y] = piece
+    @board[start_x][start_y] = '_'
+  end
 end
 
 # Gameboard
@@ -113,27 +135,7 @@ class Board
     @board[0][3] = BLACK[:king]
   end
 
-  def move(start, target)
-    start_x = +start[0].to_i
-    start_y = +start[1]
-    target_x = +target[0].to_i
-    target_y = +target[1]
-    ('a'..'h').to_a.each_with_index do |letter, index|
-      if start_y == letter
-        start_y = index.to_s
-        start_y = start_y.to_i
-      end
-      if target_y == letter
-        target_y = index.to_s
-        target_y = target_y.to_i
-      end
-    end
-    # need to check if input is valid
-    # need to confirm selected piece is not empty
-    piece = @board[start_x][start_y]
-    @board[target_x][target_y] = piece
-    @board[start_x][start_y] = '_'
-  end
+ 
 
   def valid_pos?(pos)
     row, col = pos
