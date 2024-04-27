@@ -20,17 +20,23 @@ module UI
   }.freeze
 
   def show_board
+    puts "\t\t  a b c d e f g h"
     @board.each_with_index do |row, index|
       puts "\t\t#{index}|#{row.join('|')}|"
     end
-    puts "\t\t  a b c d e f g h"
   end
 
   def intro
-    puts "\tPlayer 1 is white."
     puts "\tTo move, first enter the coordinates of the piece you wish to move."
-    puts "\tFor example, move a knight: 7g, 5f"
+    puts "\tFor example, move a knight type 7g and press enter."
+    puts "\tThen enter the coordinates of where you want to move it."
+    puts
     puts "\tEnter save, load, or quit to do those actions."
+    puts "\tThis works more like a digital chess board with pieces rather than a video game!"
+    puts "\tThat means that aside from checking if moves are legal and for winning conditions,"
+    puts "\tit is on the player to play properly."
+    puts
+    puts "\tPlayer 1 is white and goes first."
   end
 end
 
@@ -105,6 +111,28 @@ class Board
     @board[7][4] = WHITE[:king]
     @units_b['king'] = King.new(:black, [0, 3])
     @board[0][3] = BLACK[:king]
+  end
+
+  def move(start, target)
+    start_x = +start[0].to_i
+    start_y = +start[1]
+    target_x = +target[0].to_i
+    target_y = +target[1]
+    ('a'..'h').to_a.each_with_index do |letter, index|
+      if start_y == letter
+        start_y = index.to_s
+        start_y = start_y.to_i
+      end
+      if target_y == letter
+        target_y = index.to_s
+        target_y = target_y.to_i
+      end
+    end
+    # need to check if input is valid
+    # need to confirm selected piece is not empty
+    piece = @board[start_x][start_y]
+    @board[target_x][target_y] = piece
+    @board[start_x][start_y] = '_'
   end
 
   def valid_pos?(pos)
