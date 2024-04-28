@@ -49,9 +49,7 @@ module UI
     coords = gets.chomp
     abort 'Quitting game...' if coords == 'quit'
     save(@state) if coords == 'save'
-    if coords == 'load'
-      load
-    end
+    load if coords == 'load'
     coords
   end
 
@@ -109,11 +107,31 @@ module UI
         target_y = target_y.to_i
       end
     end
-    # need to check if input is valid
-    # need to confirm selected piece is not empty
+    # not checking if input is valid as this is a board sim
+    # this game allows for cheating by moving the other player's peice
+    # but it should make sure that the selected piece moves the way it is supposed to
+    # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
+    identify(piece)
     @board[target_x][target_y] = piece
     @board[start_x][start_y] = '_'
+  end
+
+  def identify(piece)
+    case piece
+    when WHITE[:pawn] || BLACK[:pawn]
+      :pawn
+    when WHITE[:bishop] || BLACK[:bishop]
+      :bishop
+    when WHITE[:knight] || BLACK[:knight]
+      :knight
+    when WHITE[:rook] || BLACK[:rook]
+      :rook
+    when WHITE[:queen] || BLACK[:queen]
+      :queen
+    when WHITE[:king] || BLACK[:king]
+      :king
+    end
   end
 end
 
@@ -131,10 +149,10 @@ class Board
     populate
     show_board
     intro
-    if File.exist?('save.yml')
-      puts 'Save file detected.'
-      self.load
-    end
+    return unless File.exist?('save.yml')
+
+    puts 'Save file detected.'
+    self.load
   end
 
   def populate
