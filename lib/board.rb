@@ -83,22 +83,16 @@ module UI
     target_x = +target[0].to_i
     target_y = +target[1]
     ('a'..'h').to_a.each_with_index do |letter, index|
-      if start_y == letter
-        start_y = index.to_s
-        start_y = start_y.to_i
-      end
-      if target_y == letter
-        target_y = index.to_s
-        target_y = target_y.to_i
-      end
+      start_y = index.to_s.to_i if start_y == letter
+      target_y = index.to_s.to_i if target_y == letter
     end
-    # not checking if input is valid as this is a board sim
+    # currently does not check if input is valid
     # this game allows for cheating by moving the other player's peice
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
-    moves = piece.move_set
-    # check if target is within reach of the piece's moveset
+   # moves = piece.move_set
+    # check if target is within reach of the piece's moveset (including obstacles)
     @board[target_x][target_y] = piece
     @board[start_x][start_y] = '_'
   end
