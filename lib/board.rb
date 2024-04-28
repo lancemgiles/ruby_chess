@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "pieces"
+
 # User Interface methods
 module UI
   WHITE = {
@@ -167,51 +169,55 @@ class Board
   def populate_pawns
     8.times do |col|
       @units_w["pawn#{col}"] = Pawn.new(:white, [6, col])
-      @board[6][col] = WHITE[:pawn]
+      @board[6][col] = @units_w["pawn#{col}"]
       @units_b["pawn#{col}"] = Pawn.new(:black, [1, col])
-      @board[1][col] = BLACK[:pawn]
+      @board[1][col] = @units_b["pawn#{col}"]
     end
   end
 
   def populate_bishops
-    @units_w['bishop2'] = Bishop.new(:white, [7, 2])
-    @units_w['bishop5'] = Bishop.new(:white, [7, 5])
-    @board[7][2] = @board[7][5] = WHITE[:bishop]
-    @units_b['bishop2'] = Bishop.new(:black, [0, 2])
-    @units_b['bishop5'] = Bishop.new(:black, [0, 5])
-    @board[0][2] = @board[0][5] = BLACK[:bishop]
-  end
-
-  def populate_rooks
-    @units_w['rook0'] = Rook.new(:white, [7, 0])
-    @units_w['rook7'] = Rook.new(:white, [7, 7])
-    @board[7][0] = @board[7][7] = WHITE[:rook]
-    @units_b['rook0'] = Rook.new(:black, [0, 0])
-    @units_b['rook7'] = Rook.new(:black, [0, 7])
-    @board[0][7] = @board[0][0] = BLACK[:rook]
+    @units_w[:bishop2] = Bishop.new(:white, [7, 2])
+    @units_w[:bishop5] = Bishop.new(:white, [7, 5])
+    @board[7][2] = @units_w[:bishop2]
+    @board[7][5] = @units_w[:bishop5]
+    @units_b[:bishop2] = Bishop.new(:black, [0, 2])
+    @units_b[:bishop5] = Bishop.new(:black, [0, 5])
+    @board[0][2] = @units_b[:bishop2]
+    @board[0][5] = @units_b[:bishop5]
   end
 
   def populate_knights
-    @units_w['knight1'] = Knight.new(:white, [7, 1])
-    @units_w['knight6'] = Knight.new(:white, [7, 6])
-    @board[7][1] = @board[7][6] = WHITE[:knight]
-    @units_b['knight1'] = Knight.new(:black, [0, 1])
-    @units_b['knight6'] = Knight.new(:black, [0, 6])
-    @board[0][1] = @board[0][6] = BLACK[:knight]
+    @units_w[:knight1] = Knight.new(:white, [7, 1])
+    @units_w[:knight6] = Knight.new(:white, [7, 6])
+    @board[7][1] = @units_w[:knight1]
+    @board[7][6] = @units_w[:knight6]
+    @units_b[:knight1] = Knight.new(:black, [0, 1])
+    @units_b[:knight6] = Knight.new(:black, [0, 6])
+    @board[0][1] = @units_b[:knight1]
+    @board[0][6] = @units_b[:knight6]
+  end
+
+  def populate_rooks
+    @units_w[:rook0] = Rook.new(:white, [7, 0])
+    @units_w[:rook7] = Rook.new(:white, [7, 7])
+    @board[7][0] = @board[7][7] = @units_w[:rook0].to_s
+    @units_b[:rook0] = Rook.new(:black, [0, 0])
+    @units_b[:rook7] = Rook.new(:black, [0, 7])
+    @board[0][7] = @board[0][0] = @units_b[:rook0].to_s
   end
 
   def populate_queens
-    @units_w['queen'] = Queen.new(:white, [7, 3])
-    @board[7][3] = WHITE[:queen]
-    @units_b['queen'] = Queen.new(:black, [0, 4])
-    @board[0][4] = BLACK[:queen]
+    @units_w[:queen] = Queen.new(:white, [7, 3])
+    @board[7][3] = @units_w[:queen]
+    @units_b[:queen] = Queen.new(:black, [0, 4])
+    @board[0][4] = @units_b[:queen]
   end
 
   def populate_kings
-    @units_w['king'] = King.new(:white, [7, 4])
-    @board[7][4] = WHITE[:king]
-    @units_b['king'] = King.new(:black, [0, 3])
-    @board[0][3] = BLACK[:king]
+    @units_w[:king] = King.new(:white, [7, 4])
+    @board[7][4] = @units_w[:king]
+    @units_b[:king] = King.new(:black, [0, 3])
+    @board[0][3] = @units_b[:king]
   end
 
   def update_game
