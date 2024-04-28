@@ -69,20 +69,15 @@ module UI
   end
 
   def move(start, target)
-    if start == 'save' ||
-       start == 'load'
-      start = input_coords
-    elsif target == 'save' ||
-          target == 'load'
-      target = input_coords
-    end
+    check_sl(start, target)
     start = start.split('')
     target = target.split('')
     start_x = +start[0].to_i
     start_y = +start[1]
     target_x = +target[0].to_i
     target_y = +target[1]
-    ('a'..'h').to_a.each_with_index do |letter, index|
+    ('a'..'z').to_a.each_with_index do |letter, index|
+      # goes beyond h for validation check
       start_y = index.to_s.to_i if start_y == letter
       target_y = index.to_s.to_i if target_y == letter
     end
@@ -91,10 +86,28 @@ module UI
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
-   # moves = piece.move_set
-    # check if target is within reach of the piece's moveset (including obstacles)
-    @board[target_x][target_y] = piece
-    @board[start_x][start_y] = '_'
+    target_coord = [target_x, target_y]
+    if piece.valid_move?(target_coord)
+      # check if target is within reach of the piece's moveset (including obstacles)
+      @board[target_x][target_y] = piece
+      @board[start_x][start_y] = '_'
+      piece.position = target_coord
+    else
+      # change this eventually
+      puts 'You entered an invalid move and now lose a turn!'
+    end
+  end
+
+  def check_sl(start, target)
+    if start == 'save' ||
+       start == 'load'
+     start = input_coords
+     start
+    elsif target == 'save' ||
+          target == 'load'
+     target = input_coords
+     target
+    end
   end
 end
 
