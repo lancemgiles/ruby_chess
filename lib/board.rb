@@ -4,23 +4,6 @@ require_relative "pieces"
 
 # User Interface methods
 module UI
-  WHITE = {
-    pawn: "\u265F",
-    knight: "\u265E",
-    bishop: "\u265D",
-    rook: "\u265C",
-    queen: "\u265B",
-    king: "\u265A"
-  }.freeze
-  BLACK = {
-    pawn: "\u2659",
-    knight: "\u2658",
-    bishop: "\u2657",
-    rook: "\u2656",
-    queen: "\u2655",
-    king: "\u2654"
-  }.freeze
-
   def show_board
     puts "\t\t  a b c d e f g h"
     @board.each_with_index do |row, index|
@@ -114,26 +97,10 @@ module UI
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
-    identify(piece)
+    moves = piece.move_set
+    # check if target is within reach of the piece's moveset
     @board[target_x][target_y] = piece
     @board[start_x][start_y] = '_'
-  end
-
-  def identify(piece)
-    case piece
-    when WHITE[:pawn] || BLACK[:pawn]
-      :pawn
-    when WHITE[:bishop] || BLACK[:bishop]
-      :bishop
-    when WHITE[:knight] || BLACK[:knight]
-      :knight
-    when WHITE[:rook] || BLACK[:rook]
-      :rook
-    when WHITE[:queen] || BLACK[:queen]
-      :queen
-    when WHITE[:king] || BLACK[:king]
-      :king
-    end
   end
 end
 
