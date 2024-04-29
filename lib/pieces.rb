@@ -20,10 +20,12 @@ class Pawn < Piece
   end
 
   def move_set
-    moves = [[0, 1]]
-    # first_move = false if @position != @board[6]
-    if first_move
-      moves << [0, 2]
+    if @team == :white
+      moves = [[0, 1]]
+      moves << [0, 2] if first_move
+    elsif @team == :black
+      moves = [[0, -1]]
+      moves << [0, -2] if first_move
     end
     # needs diagonal move for attack
     moves

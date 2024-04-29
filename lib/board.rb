@@ -57,7 +57,7 @@ module UI
   end
 
   def load
-    puts 'Load saved game? (y/n)'
+    puts 'Save file detected. Load saved game? (y/n)'
     ans = gets.downcase.chomp[0]
     return unless ans == 'y'
 
@@ -78,13 +78,10 @@ module UI
     target_x = +target[0]
     target_y = +target[1].to_i
     ('a'..'z').to_a.each_with_index do |letter, index|
-      # goes beyond h for validation check
+      # goes beyond h to keep validation check from crashing
       start_x = index.to_s.to_i if start_x == letter
       target_x = index.to_s.to_i if target_x == letter
     end
-    # currently does not check if input is valid
-    # this game allows for cheating by moving the other player's peice
-    # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_y][start_x]
     start_coord = [start_x, start_y]
@@ -100,15 +97,18 @@ module UI
     end
   end
 
+  def piece_in_path?(piece, start, target) end
+
+  def friendly_piece?(piece, target) end
+
   # because knights can jump, this works for them. other pieces need to check for obstacles.
   def valid_target?(piece, start, target)
+    return false if piece == '_'
+
     valid_targs = []
-    p piece.class
-    p piece.move_set
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
-    p valid_targs.sort
     valid_targs.reverse_each do |targ|
       targ.reverse_each do |coord|
         valid_targs.delete(targ) if coord > 7
@@ -130,18 +130,15 @@ class Board
   attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn
 
   def initialize
+    intro
     @board = Array.new(8) { Array.new(8) { '_' } }
-    @units_b = {}
-    @units_w = {}
+    @units_b = @units_w = {}
     @turn = 1
     @state = [@board, @units_b, @units_w, @turn]
     populate
     show_board
-    intro
-    p @board
     return unless File.exist?('save.yml')
 
-    puts 'Save file detected.'
     self.load
   end
 
