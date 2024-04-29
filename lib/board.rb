@@ -86,6 +86,7 @@ module UI
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
+    p piece.class
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
     if valid_target?(piece, start_coord, target_coord)
