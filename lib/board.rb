@@ -99,8 +99,8 @@ module UI
   end
 
   def check_sl(start, target)
-    input_coords if start.include? ('save' || 'load')
-    input_coords if target.include? ('save' || 'load')
+    input_coords if start.include?('save' || 'load')
+    input_coords if target.include?('save' || 'load')
   end
 end
 
