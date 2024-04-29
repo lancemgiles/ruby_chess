@@ -106,6 +106,13 @@ module UI
     return false if piece == '_'
 
     valid_targs = []
+    p offensive_move?(piece)
+    if piece.instance_of?(Pawn) && offensive_move?(piece)
+      puts 'pawn'
+      piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
+      p piece.move_set
+      piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
+    end
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
@@ -208,6 +215,22 @@ class Board
   def update_game
     @state = [@board, @units_b, @units_w, @turn]
     show_board
+  end
+
+  def offensive_move?(pawn)
+    attackable_w_1 = @board[pawn.position[1] - 1][pawn.position[0] - 1]
+    # attackable_w_2 = @board[pawn.position[1] + 1][pawn.position[0] + 1].position
+    p attackable_w_1
+    #p attackable_w_2
+    #attackable_b_1 = @board[pawn.position[1] - 1][pawn.position[0] + 1].position
+    #attackable_b_2 = @board[pawn.position[1] - 1, pawn.position[0] - 1].position
+    if pawn.team == :white
+      return true if attackable_w_1.class.superclass == Piece && attackable_w_1.team == :black
+    # elsif pawn.team == :black
+    #   attackable_b.each { |pos| return true if pos.class.superclass == Piece && pos.team == :white }
+    else
+      false
+    end
   end
 
   def play

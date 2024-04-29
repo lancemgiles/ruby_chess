@@ -12,23 +12,24 @@ end
 
 # Pawns
 class Pawn < Piece
-  attr_accessor :first_move
+  attr_accessor :first_move, :move_set
 
   def initialize(team, position)
     super
     @first_move = true
+    moves
   end
 
-  def move_set
+  def moves
+    @moves_set = []
     if @team == :white
-      moves = [[0, 1]]
-      moves << [0, 2] if first_move
+      @move_set = [[0, 1]]
+      @move_set << [0, 2] if @first_move
     elsif @team == :black
-      moves = [[0, -1]]
-      moves << [0, -2] if first_move
+      @move_set = [[0, -1]]
+      @move_set << [0, -2] if @first_move
     end
-    # needs diagonal move for attack
-    moves
+    @move_set
   end
 
   def to_s
