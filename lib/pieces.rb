@@ -36,7 +36,7 @@ end
 
 # Knight
 class Knight < Piece
-  def valid_move?(target)
+  def move_set
     # knights can jump over pieces, so no obsructions need to be considered
     # but the knight cannot take pieces from its own side
     # to check if a target position is valid:
@@ -52,7 +52,7 @@ class Knight < Piece
     # [9, 5] - out of board
     # [5, 7] - valid only if no piece from the same side is there
     # [5, 5] - ditto
-    move_set = [
+    [
       [1, 2],
       [1, -2],
       [-1, 2],
@@ -64,12 +64,7 @@ class Knight < Piece
     ]
     # only checks if it is in the board, assumes no negative numbers input
     # some black valid moves are blocked
-    move_set.each do |pos|
-      targ = [target[0] + pos[0], target[1] + pos[1]]
-      return false if targ.any?([target[0], target[1]])
-
-      return false if targ.any? { |n| n >= 8 }
-    end
+   
   end
 
   def to_s

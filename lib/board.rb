@@ -87,7 +87,7 @@ module UI
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
     target_coord = [target_x, target_y]
-    if piece.valid_move?(target_coord)
+    if valid_target?(piece, target_coord)
       # check if target is within reach of the piece's moveset (including obstacles)
       @board[target_x][target_y] = piece
       @board[start_x][start_y] = '_'
@@ -95,6 +95,15 @@ module UI
     else
       # change this eventually
       puts 'You entered an invalid move and now lose a turn!'
+    end
+  end
+
+  def valid_target?(piece, target)
+    piece.move_set.each do |pos|
+      targ = [target[0] + pos[0], target[1] + pos[1]]
+      return false if targ.any?([target[0], target[1]])
+
+      return false if targ.any? { |n| n >= 8 }
     end
   end
 
