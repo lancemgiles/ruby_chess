@@ -220,16 +220,16 @@ class Board
   def offensive_move?(pawn)
     attackable_w = [@board[pawn.position[1] - 1][pawn.position[0] - 1],
                     @board[pawn.position[1] - 1][pawn.position[0] + 1]]
-    p attackable_w
-    #p attackable_w_2
-    #attackable_b_1 = @board[pawn.position[1] - 1][pawn.position[0] + 1].position
-    #attackable_b_2 = @board[pawn.position[1] - 1][pawn.position[0] - 1].position
+    attackable_b = [@board[pawn.position[1] + 1][pawn.position[0] + 1],
+                    @board[pawn.position[1] + 1][pawn.position[0] - 1]]
     if pawn.team == :white
       attackable_w.any? do |pos|
         pos.class.superclass == Piece && pos.team == :black
       end
-    # elsif pawn.team == :black
-    #   attackable_b.each { |pos| return true if pos.class.superclass == Piece && pos.team == :white }
+    elsif pawn.team == :black
+      attackable_b.any? do |pos|
+        pos.class.superclass == Piece && pos.team == :white
+      end
     else
       false
     end
