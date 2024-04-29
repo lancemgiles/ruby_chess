@@ -103,13 +103,17 @@ module UI
   def valid_target?(piece, start, target)
     valid_targs = []
     piece.move_set.each do |pos|
-      valid_targs << [start[0] + pos[0], start[1] + pos[1]]
+      valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
+    p valid_targs
     valid_targs.reverse_each do |targ|
+      p targ
       targ.reverse_each do |coord|
+        p coord
         valid_targs.delete(targ) if coord > 7
       end
     end
+    p valid_targs
     true if valid_targs.any?(target)
   end
 
@@ -182,10 +186,10 @@ class Board
   def populate_rooks
     @units_w[:rook0] = Rook.new(:white, [7, 0])
     @units_w[:rook7] = Rook.new(:white, [7, 7])
-    @board[7][0] = @board[7][7] = @units_w[:rook0].to_s
+    @board[7][0] = @board[7][7] = @units_w[:rook0]
     @units_b[:rook0] = Rook.new(:black, [0, 0])
     @units_b[:rook7] = Rook.new(:black, [0, 7])
-    @board[0][7] = @board[0][0] = @units_b[:rook0].to_s
+    @board[0][7] = @board[0][0] = @units_b[:rook0]
   end
 
   def populate_queens
@@ -213,10 +217,5 @@ class Board
       @turn += 1
       update_game
     end
-  end
-
-  def valid_pos?(pos)
-    row, col = pos
-    row >= 0 && row < 8 && col >= 0 && col < 8
   end
 end

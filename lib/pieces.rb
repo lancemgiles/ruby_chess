@@ -70,6 +70,12 @@ end
 # Rook
 class Rook < Piece
   def move_set
+    moves = []
+    8.times do |n|
+      moves << [n, 0]
+      moves << [0, n]
+    end
+    moves.uniq
   end
   def to_s
     return "\u265C" if @team == :white
