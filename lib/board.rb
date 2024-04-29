@@ -7,8 +7,9 @@ module UI
   def show_board
     puts "\t\t  a b c d e f g h"
     @board.each_with_index do |row, index|
-      puts "\t\t#{index}|#{row.join('|')}|"
+      puts "\t\t#{index}|#{row.join('|')}|#{index}"
     end
+    puts "\t\t  a b c d e f g h"
     if @turn.odd?
       puts "\tWhite's turn"
     else
