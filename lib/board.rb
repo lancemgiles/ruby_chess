@@ -86,9 +86,9 @@ module UI
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
     piece = @board[start_x][start_y]
+    start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
-    if valid_target?(piece, target_coord)
-      # check if target is within reach of the piece's moveset (including obstacles)
+    if valid_target?(piece, start_coord, target_coord)
       @board[target_x][target_y] = piece
       @board[start_x][start_y] = '_'
       piece.position = target_coord
@@ -98,13 +98,18 @@ module UI
     end
   end
 
-  def valid_target?(piece, target)
+  # because knights can jump, this works for them. other pieces need to check for obstacles.
+  def valid_target?(piece, start, target)
+    valid_targs = []
     piece.move_set.each do |pos|
-      targ = [target[0] + pos[0], target[1] + pos[1]]
-      return false if targ.any?([target[0], target[1]])
-
-      return false if targ.any? { |n| n >= 8 }
+      valid_targs << [start[0] + pos[0], start[1] + pos[1]]
     end
+    valid_targs.reverse_each do |targ|
+      targ.reverse_each do |coord|
+        valid_targs.delete(targ) if coord > 7
+      end
+    end
+    true if valid_targs.any?(target)
   end
 
   def check_sl(start, target)

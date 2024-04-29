@@ -37,21 +37,6 @@ end
 # Knight
 class Knight < Piece
   def move_set
-    # knights can jump over pieces, so no obsructions need to be considered
-    # but the knight cannot take pieces from its own side
-    # to check if a target position is valid:
-    # for each position in this set, apply it to the start position
-    # so if start position if 7g, that becomes [7, 6]
-    # every possible position would then be calculated
-    # subtraction moves to the right and up
-    # [8, 8] - remove because it is outside of the range allowed by the board
-    # [8, 4] - ditto
-    # [6, 8] - ditto
-    # [6, 4] - valid position only if no piece from the same side is there
-    # [9, 7] - out of board
-    # [9, 5] - out of board
-    # [5, 7] - valid only if no piece from the same side is there
-    # [5, 5] - ditto
     [
       [1, 2],
       [1, -2],
@@ -62,9 +47,6 @@ class Knight < Piece
       [-2, 1],
       [-2, -1]
     ]
-    # only checks if it is in the board, assumes no negative numbers input
-    # some black valid moves are blocked
-   
   end
 
   def to_s
