@@ -107,10 +107,8 @@ module UI
 
     valid_targs = []
     p offensive_move?(piece)
-    if piece.instance_of?(Pawn) && offensive_move?(piece)
-      puts 'pawn'
+    if piece.instance_of?(Pawn) && offensive_move?(piece) && @board[target[1]][target[0]] != '_'
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
-      p piece.move_set
       piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
     end
     piece.move_set.each do |pos|
