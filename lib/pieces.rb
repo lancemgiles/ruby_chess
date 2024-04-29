@@ -95,6 +95,16 @@ end
 # Queen
 class Queen < Piece
   def move_set
+    moves = []
+    8.times do |n|
+      moves << [n, 0]
+      moves << [0, n]
+      moves << [n, n]
+      moves << [n, -n]
+      moves << [-n, n]
+      moves << [-n, -n]
+    end
+    moves.sort.uniq
   end
   def to_s
     return "\u265B" if @team == :white
