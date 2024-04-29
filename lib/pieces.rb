@@ -22,7 +22,9 @@ class Pawn < Piece
   def move_set
     moves = [[0, 1]]
     # first_move = false if @position != @board[6]
-    [0, 2] << moves if first_move
+    if first_move
+      moves << [0, 2]
+    end
     # needs diagonal move for attack
     moves
   end

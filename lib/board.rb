@@ -19,7 +19,7 @@ module UI
 
   def intro
     puts "\tTo move, first enter the coordinates of the piece you wish to move."
-    puts "\tFor example, move a knight type 7g and press enter."
+    puts "\tFor example, move a knight type g7 and press enter."
     puts "\tThen enter the coordinates of where you want to move it."
     puts
     puts "\tEnter save, load, or quit to do those actions."
@@ -73,27 +73,27 @@ module UI
     check_sl(start, target)
     start = start.split('')
     target = target.split('')
-    start_x = +start[0].to_i
-    start_y = +start[1]
-    target_x = +target[0].to_i
-    target_y = +target[1]
+    start_x = +start[0]
+    start_y = +start[1].to_i
+    target_x = +target[0]
+    target_y = +target[1].to_i
     ('a'..'z').to_a.each_with_index do |letter, index|
       # goes beyond h for validation check
-      start_y = index.to_s.to_i if start_y == letter
-      target_y = index.to_s.to_i if target_y == letter
+      start_x = index.to_s.to_i if start_x == letter
+      target_x = index.to_s.to_i if target_x == letter
     end
     # currently does not check if input is valid
     # this game allows for cheating by moving the other player's peice
     # but it should make sure that the selected piece moves the way it is supposed to
     # need to check for check and checkmate and castling
-    piece = @board[start_x][start_y]
-    p piece.class
+    piece = @board[start_y][start_x]
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
     if valid_target?(piece, start_coord, target_coord)
-      @board[target_x][target_y] = piece
-      @board[start_x][start_y] = '_'
+      @board[target_y][target_x] = piece
+      @board[start_y][start_x] = '_'
       piece.position = target_coord
+      piece.first_move = false if piece.instance_of?(Pawn)
     else
       # change this eventually
       puts 'You entered an invalid move and now lose a turn!'
@@ -103,6 +103,7 @@ module UI
   # because knights can jump, this works for them. other pieces need to check for obstacles.
   def valid_target?(piece, start, target)
     valid_targs = []
+    p piece.class
     p piece.move_set
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
@@ -137,6 +138,7 @@ class Board
     populate
     show_board
     intro
+    p @board
     return unless File.exist?('save.yml')
 
     puts 'Save file detected.'
@@ -153,56 +155,56 @@ class Board
   end
 
   def populate_pawns
-    8.times do |col|
-      @units_w["pawn#{col}"] = Pawn.new(:white, [6, col])
-      @board[6][col] = @units_w["pawn#{col}"]
-      @units_b["pawn#{col}"] = Pawn.new(:black, [1, col])
-      @board[1][col] = @units_b["pawn#{col}"]
+    8.times do |x|
+      @units_w["pawn#{x}"] = Pawn.new(:white, [x, 6])
+      @board[6][x] = @units_w["pawn#{x}"]
+      @units_b["pawn#{x}"] = Pawn.new(:black, [x, 1])
+      @board[1][x] = @units_b["pawn#{x}"]
     end
   end
 
   def populate_bishops
-    @units_w[:bishop2] = Bishop.new(:white, [7, 2])
-    @units_w[:bishop5] = Bishop.new(:white, [7, 5])
+    @units_w[:bishop2] = Bishop.new(:white, [2, 7])
+    @units_w[:bishop5] = Bishop.new(:white, [5, 7])
     @board[7][2] = @units_w[:bishop2]
     @board[7][5] = @units_w[:bishop5]
-    @units_b[:bishop2] = Bishop.new(:black, [0, 2])
-    @units_b[:bishop5] = Bishop.new(:black, [0, 5])
+    @units_b[:bishop2] = Bishop.new(:black, [2, 0])
+    @units_b[:bishop5] = Bishop.new(:black, [5, 0])
     @board[0][2] = @units_b[:bishop2]
     @board[0][5] = @units_b[:bishop5]
   end
 
   def populate_knights
-    @units_w[:knight1] = Knight.new(:white, [7, 1])
-    @units_w[:knight6] = Knight.new(:white, [7, 6])
+    @units_w[:knight1] = Knight.new(:white, [1, 7])
+    @units_w[:knight6] = Knight.new(:white, [6, 7])
     @board[7][1] = @units_w[:knight1]
     @board[7][6] = @units_w[:knight6]
-    @units_b[:knight1] = Knight.new(:black, [0, 1])
-    @units_b[:knight6] = Knight.new(:black, [0, 6])
+    @units_b[:knight1] = Knight.new(:black, [1, 0])
+    @units_b[:knight6] = Knight.new(:black, [6, 0])
     @board[0][1] = @units_b[:knight1]
     @board[0][6] = @units_b[:knight6]
   end
 
   def populate_rooks
-    @units_w[:rook0] = Rook.new(:white, [7, 0])
+    @units_w[:rook0] = Rook.new(:white, [0, 7])
     @units_w[:rook7] = Rook.new(:white, [7, 7])
     @board[7][0] = @board[7][7] = @units_w[:rook0]
     @units_b[:rook0] = Rook.new(:black, [0, 0])
-    @units_b[:rook7] = Rook.new(:black, [0, 7])
+    @units_b[:rook7] = Rook.new(:black, [7, 0])
     @board[0][7] = @board[0][0] = @units_b[:rook0]
   end
 
   def populate_queens
-    @units_w[:queen] = Queen.new(:white, [7, 3])
+    @units_w[:queen] = Queen.new(:white, [3, 7])
     @board[7][3] = @units_w[:queen]
-    @units_b[:queen] = Queen.new(:black, [0, 4])
+    @units_b[:queen] = Queen.new(:black, [4, 0])
     @board[0][4] = @units_b[:queen]
   end
 
   def populate_kings
-    @units_w[:king] = King.new(:white, [7, 4])
+    @units_w[:king] = King.new(:white, [4, 7])
     @board[7][4] = @units_w[:king]
-    @units_b[:king] = King.new(:black, [0, 3])
+    @units_b[:king] = King.new(:black, [3, 0])
     @board[0][3] = @units_b[:king]
   end
 
