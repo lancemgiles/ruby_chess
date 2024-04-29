@@ -102,18 +102,17 @@ module UI
   # because knights can jump, this works for them. other pieces need to check for obstacles.
   def valid_target?(piece, start, target)
     valid_targs = []
+    p piece.move_set
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
-    p valid_targs
+    p valid_targs.sort
     valid_targs.reverse_each do |targ|
-      p targ
       targ.reverse_each do |coord|
-        p coord
         valid_targs.delete(targ) if coord > 7
       end
     end
-    p valid_targs
+    p valid_targs.sort
     true if valid_targs.any?(target)
   end
 

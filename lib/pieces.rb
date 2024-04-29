@@ -59,6 +59,14 @@ end
 # Bishop
 class Bishop < Piece
   def move_set
+    moves = []
+    8.times do |n|
+      moves << [n, n]
+      moves << [n, -n]
+      moves << [-n, n]
+      moves << [-n, -n]
+    end
+    moves.sort.uniq
   end
   def to_s
     return "\u265D" if @team == :white
