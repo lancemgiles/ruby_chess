@@ -91,6 +91,7 @@ module UI
       @board[start_y][start_x] = '_'
       piece.position = target_coord
       piece.first_move = false if piece.instance_of?(Pawn)
+      promote(piece) if piece.instance_of?(Pawn)
     else
       # change this eventually
       puts 'You entered an invalid move and now lose a turn!'
@@ -233,6 +234,16 @@ class Board
     end
   end
 
+  def promote(pawn)
+    if pawn.team == :white && pawn.position[1].zero?
+      @units_w[:queen_p] = Queen.new(:white, pawn.position) 
+      @board[pawn.position[1]][pawn.position[0]] = @units_w[:queen_p]
+    end
+    if pawn.team == :black && pawn.position[1] == 7
+      @units_b[:queen_p] = Queen.new(:black, pawn.position) 
+      @board[pawn.position[1]][pawn.position[0]] = @units_b[:queen_p]
+    end
+  end
   def play
     loop do
       move(input_coords, input_coords)
