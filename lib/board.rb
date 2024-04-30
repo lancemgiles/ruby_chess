@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "pieces"
+# require_relative 'pieces'
 
 # User Interface methods
 module UI
@@ -110,8 +110,7 @@ module UI
     return false if piece == '_'
 
     valid_targs = []
-    p offensive_move?(piece)
-    if piece.instance_of?(Pawn) && offensive_move?(piece) && @board[target[1]][target[0]] != '_'
+    if offensive_move?(piece) && @board[target[1]][target[0]] != '_'
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
       piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
     end
@@ -123,8 +122,13 @@ module UI
         valid_targs.delete(targ) if coord > 7
       end
     end
+    p piece.class
     p valid_targs.sort
-    true if valid_targs.any?(target)
+    if valid_targs.any?(target)
+      sights = line_of_sight(valid_targs, target)
+      obst = obstacles(sights, target)
+      return true if obst.length.zero?
+    end
   end
 
   def check_sl(start, target)
@@ -221,6 +225,8 @@ class Board
   end
 
   def offensive_move?(pawn)
+    return false unless pawn.instance_of?(Pawn)
+
     attackable_w = [@board[pawn.position[1] - 1][pawn.position[0] - 1],
                     @board[pawn.position[1] - 1][pawn.position[0] + 1]]
     attackable_b = [@board[pawn.position[1] + 1][pawn.position[0] + 1],
@@ -250,26 +256,47 @@ class Board
   end
 
   # return pieces other than the target which are in the range of possible moves
-  # call this in #move with valid_targs as moves
+  # call this in #move with valid_targs as moves and confirming the target is valid
   def line_of_sight(moves, target)
     # return if piece.instance_of?(Knight)
     # check if there are any pieces in the path from start to target
     in_sights = moves
+    in_sights.each do |pos|
+      piece = @board[pos[1]][pos[0]]
+      in_sights.delete(pos) if piece.instance_of?(String)
+      next if piece.instance_of?(String)
+
+      in_sights.delete(pos) if piece.position == target
+    end
     # think of a rook at [7, 7] moving to [7, 0]
     # if there's a piece at [7, (0..6)] then the move is invalid
     # get a list of spaces between start and target
 
     # first, get all possible moves
     # any pieces that are in the list of possible moves but aren't the target could be in the way and are in the line of sight
-    in_sights.each do |p|
-      in_sights.delete(p) unless p.class.superclass == Piece
-      in_sights.delete(p) if p.position == target
-    end
     in_sights
   end
 
-  def check?(piece, start, target)
+  def obstacles(sights, target)
+    obstacles = []
+    sights.sort!
+    sights.each_with_index do |piece, index|
+      sights.delete(piece) if piece[index] >= target[index]
+      # remove any pieces which come after the target index as they aren't on the way to the target
+      # assuming the piece is a queen moving diagonally all the way across the board, this trims nothing
+      case piece
+      when target[0] == piece[0]
+        obstacles << piece
+      when target[1] == piece[1]
+        obstacles << piece
+      else
+        sights.delete(piece) if target[0] == piece[0] || target[1] == piece[1]
+      end
+    end
+    obstacles
+  end
 
+  def check?(piece, start, target)
     puts 'Check!'
     @check = true
   end
