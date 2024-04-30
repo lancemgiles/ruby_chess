@@ -54,6 +54,7 @@ module UI
     state[1] = @units_b
     state[2] = @units_w
     state[3] = @turn
+    state[4] = @check
   end
 
   def load
@@ -63,9 +64,10 @@ module UI
 
     @state = YAML.load_file('save.yml', aliases: true, permitted_classes: [Board, Piece, Pawn, Knight, Bishop, Rook, Queen, King, Symbol])
     @board = @state[0]
-    @units_b = state[1]
-    @units_w = state[2]
-    @turn = state[3]
+    @units_b = @state[1]
+    @units_w = @state[2]
+    @turn = @state[3]
+    @check = @state[4]
     update_game
   end
 
@@ -92,6 +94,7 @@ module UI
       piece.position = target_coord
       piece.first_move = false if piece.instance_of?(Pawn)
       promote(piece) if piece.instance_of?(Pawn)
+      @last_move = piece
     else
       # change this eventually
       puts 'You entered an invalid move and now lose a turn!'
@@ -133,14 +136,15 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :check, :last_move
 
   def initialize
     intro
     @board = Array.new(8) { Array.new(8) { '_' } }
     @units_b = @units_w = {}
     @turn = 1
-    @state = [@board, @units_b, @units_w, @turn]
+    @check = false
+    @state = [@board, @units_b, @units_w, @turn, @check]
     populate
     show_board
     return unless File.exist?('save.yml')
@@ -212,7 +216,7 @@ class Board
   end
 
   def update_game
-    @state = [@board, @units_b, @units_w, @turn]
+    @state = [@board, @units_b, @units_w, @turn, @check]
     show_board
   end
 
@@ -244,6 +248,32 @@ class Board
       @board[pawn.position[1]][pawn.position[0]] = @units_b[:queen_p]
     end
   end
+
+  # return pieces other than the target which are in the range of possible moves
+  # call this in #move with valid_targs as moves
+  def line_of_sight(moves, target)
+    # return if piece.instance_of?(Knight)
+    # check if there are any pieces in the path from start to target
+    in_sights = moves
+    # think of a rook at [7, 7] moving to [7, 0]
+    # if there's a piece at [7, (0..6)] then the move is invalid
+    # get a list of spaces between start and target
+
+    # first, get all possible moves
+    # any pieces that are in the list of possible moves but aren't the target could be in the way and are in the line of sight
+    in_sights.each do |p|
+      in_sights.delete(p) unless p.class.superclass == Piece
+      in_sights.delete(p) if p.position == target
+    end
+    in_sights
+  end
+
+  def check?(piece, start, target)
+
+    puts 'Check!'
+    @check = true
+  end
+
   def play
     loop do
       move(input_coords, input_coords)
