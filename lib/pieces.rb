@@ -86,6 +86,8 @@ class Rook < Piece
     8.times do |n|
       moves << [n, 0]
       moves << [0, n]
+      moves << [-n, 0]
+      moves << [0, -n]
     end
     moves.uniq
   end
@@ -103,6 +105,8 @@ class Queen < Piece
     8.times do |n|
       moves << [n, 0]
       moves << [0, n]
+      moves << [-n, 0]
+      moves << [0, -n]
       moves << [n, n]
       moves << [n, -n]
       moves << [-n, n]
