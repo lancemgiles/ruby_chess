@@ -15,7 +15,6 @@ module UI
         end
       end
       print "#{index}\n"
-      # puts "\t\t#{index}|\e[48;2;#{'180;0;180'}m#{row.join('|')}|\e[0m#{index}"
     end
     puts "\t\t   a   b   c   d   e   f   g   h"
     if @turn.odd?
@@ -38,6 +37,7 @@ module UI
     puts "\tPlayer 1 is white and goes first."
   end
 
+  # need to handle improper inputs
   def input_coords
     print 'Enter coordinates: '
     coords = gets.chomp
@@ -110,10 +110,6 @@ module UI
     end
   end
 
-  def piece_in_path?(piece, start, target) end
-
-  def friendly_piece?(piece, target) end
-
   def valid_target?(piece, start, target)
     return false if piece == '_'
 
@@ -122,21 +118,28 @@ module UI
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
       piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
     end
-    # puts "#{piece} move set: #{piece.move_set.sort}"
+    puts "#{piece} move set: #{piece.move_set.sort}"
     piece.move_set.each do |pos|
-      valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
-    end
-    valid_targs.reverse_each do |targ|
-      targ.reverse_each do |coord|
-        valid_targs.delete(targ) if coord >= 8
+      if start[0] == target[0] || start[1] == target[1]
+        valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
+      else
+        valid_targs << [(start[0] - pos[0]), (start[1] - pos[1])]
+                    # 4 - x = 2; 1 - x = 1 == [-2, -2]
+                    # this goes off the board, but the abs brings it back on but in an impossible to reach place
       end
     end
-    # puts "valid_targs: #{valid_targs.sort}"
+    puts "all possible moves: #{valid_targs.sort}"
+    valid_targs.reverse_each do |targ|
+      targ.reverse_each do |coord|
+        valid_targs.delete(targ) if coord >= 8 || coord.negative?
+      end
+    end
+    puts "valid_targs: #{valid_targs.sort}"
     return false unless valid_targs.any?(target)
 
-    #sights = line_of_sight(valid_targs)
-    #obst = obstacles(piece, sights, start, target)
-    true #if obst.empty?
+    sights = line_of_sight(valid_targs)
+    obst = obstacles(piece, sights, start, target)
+    true if obst.empty?
   end
 
   def check_sl(start, target)
@@ -302,20 +305,20 @@ class Board
       sights.reverse_each do |pos|
         sights.delete(pos) if target[0] == pos[0]
         sights.delete(pos) if target[1] == pos[1]
+        sights.delete(pos) unless (target[0] > pos[0] && target[1] > pos[1]) ||
+                                  (target[0] < pos[0] && target[1] < pos[1])
       end
     end
     sights.reverse_each do |pos|
       next if pos == target || pos == start
 
+      sights.push(start, target).sort!.uniq!
       print "sights: #{sights}\n"
       print "#{@board[pos[1]][pos[0]].class} at #{pos}\n"
       if piece.team == :white
-        # p pos
-        # p sights.index(start) >= sights.index(pos)
-        # p sights.index(pos) <= sights.index(target)
         sights.delete(pos) if sights.index(start) >= sights.index(pos) && sights.index(pos) <= sights.index(target)
       elsif piece.team == :black
-        sights.delete(pos) unless sights.index(start) <= sights.index(pos) && sights.index(pos) >= sights.index(target)
+        sights.delete(pos) if sights.index(start) <= sights.index(pos) && sights.index(pos) >= sights.index(target)
       end
       # remove any pieces which come after the target index as they aren't on the way to the target
       # assuming the piece is a queen moving diagonally all the way across the board, this trims nothing
