@@ -21,7 +21,6 @@ class Pawn < Piece
   end
 
   def moves
-    @moves_set = []
     if @team == :white
       @move_set = [[0, 1]]
       @move_set << [0, 2] if @first_move
