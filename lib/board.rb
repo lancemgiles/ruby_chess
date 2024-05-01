@@ -105,7 +105,6 @@ module UI
 
   def friendly_piece?(piece, target) end
 
-  # because knights can jump, this works for them. other pieces need to check for obstacles.
   def valid_target?(piece, start, target)
     return false if piece == '_'
 
@@ -114,18 +113,20 @@ module UI
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
       piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
     end
+    puts "#{piece} move set: #{piece.move_set.sort}"
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
     valid_targs.reverse_each do |targ|
       targ.reverse_each do |coord|
-        valid_targs.delete(targ) if coord > 7
+        valid_targs.delete(targ) if coord >= 8
       end
     end
+    puts "valid_targs: #{valid_targs.sort}"
     if valid_targs.any?(target)
-      sights = line_of_sight(valid_targs, target)
-      obst = obstacles(piece, sights, start, target)
-      return true if obst.length.zero?
+      #sights = line_of_sight(valid_targs, target)
+      #obst = obstacles(piece, sights, start, target)
+      return true #if obst.length.zero?
     end
   end
 
@@ -256,14 +257,10 @@ class Board
   # return pieces other than the target which are in the range of possible moves
   # call this in #move with valid_targs as moves and confirming the target is valid
   def line_of_sight(moves, target)
-    # 
     in_sights = moves
     in_sights.each do |pos|
       piece = @board[pos[1]][pos[0]]
       in_sights.delete(pos) if piece.instance_of?(String)
-      next if piece.instance_of?(String)
-
-      in_sights.delete(pos) if piece.position == target
     end
     # think of a rook at [7, 7] moving to [7, 0]
     # if there's a piece at [7, (0..6)] then the move is invalid
@@ -275,15 +272,17 @@ class Board
   end
 
   def obstacles(piece, sights, start, target)
-    obstacles = []
-    return obstacles if piece.instance_of?(Knight)
-    return obstacles if (start[0] - target[0]).abs == 1 || (start[1] - target[1]).abs == 1
+    return [] if piece.instance_of?(Knight)
+    return [] if (start[0] - target[0]).abs == 1 || (start[1] - target[1]).abs == 1
+    return [] if (start[0] + target[0]).abs == 1 || (start[1] + target[1]).abs == 1
 
-    p start
-    p target
+    puts "start: #{start}"
+    puts "target: #{target}"
     sights << target
     sights.sort!.uniq!
+    print "sights: #{sights}\n"
     # for horizontal and verticle movement
+    puts "h/v filter"
     if target[0] == start[0]
       sights.reverse_each { |pos| sights.delete(pos) unless pos[0] == target[0] }
     elsif target[1] == start[1]
@@ -297,21 +296,23 @@ class Board
     sights.reverse_each do |pos|
       next if pos == target || pos == start
 
-      p sights
-      p @board[pos[1]][pos[0]]
+      print "sights: #{sights}\n"
+      print "#{@board[pos[1]][pos[0]].class} at #{pos}\n"
       if piece.team == :white
-        p pos
-        p sights.index(start) >= sights.index(pos)
-        p sights.index(pos) <= sights.index(target)
-        sights.delete(pos) unless sights.index(start) >= sights.index(pos) && sights.index(pos) <= sights.index(target)
+        # p pos
+        # p sights.index(start) >= sights.index(pos)
+        # p sights.index(pos) <= sights.index(target)
+        sights.delete(pos) if sights.index(start) >= sights.index(pos) && sights.index(pos) <= sights.index(target)
+      elsif piece.team == :black
+        sights.delete(pos) unless sights.index(start) <= sights.index(pos) && sights.index(pos) >= sights.index(target)
       end
       # remove any pieces which come after the target index as they aren't on the way to the target
       # assuming the piece is a queen moving diagonally all the way across the board, this trims nothing
     end
-    obstacles << sights
-    p obstacles
-    obstacles.delete(target)
-    obstacles
+    sights.delete(target)
+    sights.delete(start)
+    print "sights: #{sights}\n"
+    sights
   end
 
   def check?(piece, start, target)
