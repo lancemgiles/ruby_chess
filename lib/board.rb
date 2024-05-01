@@ -96,7 +96,7 @@ module UI
     piece = @board[start_y][start_x]
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
-    if valid_target?(piece, start_coord, target_coord)
+    if valid_move?(piece, start_coord, target_coord)
       @board[target_y][target_x] = nil unless @board[target_y][target_x] == '_'
       @board[target_y][target_x] = piece
       @board[start_y][start_x] = '_'
@@ -110,9 +110,22 @@ module UI
     end
   end
 
-  def valid_target?(piece, start, target)
+  def valid_move?(piece, start, target)
     return false if piece == '_'
 
+    valid_targs = valid_targets(piece, start, target)
+    puts "valid_targs: #{valid_targs.sort}"
+    return false unless valid_targs.any?(target)
+
+    sights = line_of_sight(valid_targs)
+    obst = obstacles(piece, sights, start, target)
+    return unless obst.empty?
+
+    check?(sights, piece.team)
+    true
+  end
+
+  def valid_targets(piece, start, target)
     valid_targs = []
     if offensive_move?(piece) && @board[target[1]][target[0]] != '_'
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
@@ -134,12 +147,7 @@ module UI
         valid_targs.delete(targ) if coord >= 8 || coord.negative?
       end
     end
-    puts "valid_targs: #{valid_targs.sort}"
-    return false unless valid_targs.any?(target)
-
-    sights = line_of_sight(valid_targs)
-    obst = obstacles(piece, sights, start, target)
-    true if obst.empty?
+    valid_targs
   end
 
   def check_sl(start, target)
@@ -329,9 +337,16 @@ class Board
     sights
   end
 
-  def check?(piece, start, target)
-    puts 'Check!'
-    @check = true
+  def check?(sights, team)
+    # in move, pass sights and piece.team
+    sights.each do |pos|
+      piece = @board[pos[1]][pos[0]]
+      if piece.instance_of?(King) && piece.team != team
+        puts 'Check!'
+        @check = true
+        true
+      end
+    end
   end
 
   def play
