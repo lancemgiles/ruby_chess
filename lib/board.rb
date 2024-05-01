@@ -121,7 +121,8 @@ module UI
     obst = obstacles(piece, sights, start, target)
     return unless obst.empty?
 
-    check?(sights, piece.team)
+    new_sights = line_of_sight(valid_targets(piece, target, target))
+    check?(new_sights, piece.team)
     true
   end
 
