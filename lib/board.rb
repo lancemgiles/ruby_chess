@@ -113,7 +113,7 @@ module UI
       piece.move_set.push([1, 1], [-1, 1]) if piece.team == :white
       piece.move_set.push([1, -1], [-1, -1]) if piece.team == :black
     end
-    puts "#{piece} move set: #{piece.move_set.sort}"
+    # puts "#{piece} move set: #{piece.move_set.sort}"
     piece.move_set.each do |pos|
       valid_targs << [(start[0] - pos[0]).abs, (start[1] - pos[1]).abs]
     end
@@ -122,12 +122,12 @@ module UI
         valid_targs.delete(targ) if coord >= 8
       end
     end
-    puts "valid_targs: #{valid_targs.sort}"
-    if valid_targs.any?(target)
-      #sights = line_of_sight(valid_targs, target)
-      #obst = obstacles(piece, sights, start, target)
-      return true #if obst.length.zero?
-    end
+    # puts "valid_targs: #{valid_targs.sort}"
+    return false unless valid_targs.any?(target)
+
+    sights = line_of_sight(valid_targs, target)
+    obst = obstacles(piece, sights, start, target)
+    true if obst.empty?
   end
 
   def check_sl(start, target)
