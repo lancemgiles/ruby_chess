@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
-# require_relative 'pieces'
-
 # User Interface methods
 module UI
   def show_board
-    puts "\t\t  a b c d e f g h"
+    color = '10;120;180'
+    puts "\t\t   a   b   c   d   e   f   g   h"
     @board.each_with_index do |row, index|
-      puts "\t\t#{index}|#{row.join('|')}|#{index}"
+      print "\t\t#{index}|"
+      row.each_with_index do |col, i|
+        if (i.even? && index.even?) || (i.odd? && index.odd?)
+          print "\e[48;2;#{color}m #{col} \e[0m|"
+        else
+          print " #{col} |"
+        end
+      end
+      print "#{index}\n"
+      # puts "\t\t#{index}|\e[48;2;#{'180;0;180'}m#{row.join('|')}|\e[0m#{index}"
     end
-    puts "\t\t  a b c d e f g h"
+    puts "\t\t   a   b   c   d   e   f   g   h"
     if @turn.odd?
       puts "\tWhite's turn"
     else
@@ -89,10 +97,7 @@ module UI
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
     if valid_target?(piece, start_coord, target_coord)
-      unless @board[target_y][target_x] == '_'
-        @board[target_y][target_x] = nil
-        p @board[target_y][target_x].class
-      end
+      @board[target_y][target_x] = nil unless @board[target_y][target_x] == '_'
       @board[target_y][target_x] = piece
       @board[start_y][start_x] = '_'
       piece.position = target_coord
@@ -129,9 +134,9 @@ module UI
     # puts "valid_targs: #{valid_targs.sort}"
     return false unless valid_targs.any?(target)
 
-    sights = line_of_sight(valid_targs, target)
-    obst = obstacles(piece, sights, start, target)
-    true if obst.empty?
+    #sights = line_of_sight(valid_targs)
+    #obst = obstacles(piece, sights, start, target)
+    true #if obst.empty?
   end
 
   def check_sl(start, target)
@@ -260,10 +265,9 @@ class Board
 
   # return pieces other than the target which are in the range of possible moves
   # call this in #move with valid_targs as moves and confirming the target is valid
-  def line_of_sight(moves, target)
+  def line_of_sight(moves)
     in_sights = moves
     in_sights.reverse_each do |pos|
-      
       piece = @board[pos[1]][pos[0]]
       puts "#{pos}: #{piece.class}"
       in_sights.delete(pos) if piece.instance_of?(String)
@@ -285,7 +289,7 @@ class Board
 
     puts "start: #{start}"
     puts "target: #{target}"
-    sights << target
+    sights.push(start, target)
     sights.sort!.uniq!
     print "sights: #{sights}\n"
     # for horizontal and verticle movement
