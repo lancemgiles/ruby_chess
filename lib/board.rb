@@ -89,6 +89,10 @@ module UI
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
     if valid_target?(piece, start_coord, target_coord)
+      unless @board[target_y][target_x] == '_'
+        @board[target_y][target_x] = nil
+        p @board[target_y][target_x].class
+      end
       @board[target_y][target_x] = piece
       @board[start_y][start_x] = '_'
       piece.position = target_coord
@@ -258,8 +262,10 @@ class Board
   # call this in #move with valid_targs as moves and confirming the target is valid
   def line_of_sight(moves, target)
     in_sights = moves
-    in_sights.each do |pos|
+    in_sights.reverse_each do |pos|
+      
       piece = @board[pos[1]][pos[0]]
+      puts "#{pos}: #{piece.class}"
       in_sights.delete(pos) if piece.instance_of?(String)
     end
     # think of a rook at [7, 7] moving to [7, 0]
@@ -268,6 +274,7 @@ class Board
 
     # first, get all possible moves
     # any pieces that are in the list of possible moves but aren't the target could be in the way and are in the line of sight
+    puts "line of sight: #{in_sights}"
     in_sights
   end
 
