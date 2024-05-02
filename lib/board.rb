@@ -119,7 +119,9 @@ module UI
 
     sights = line_of_sight(valid_targs)
     obst = obstacles(piece, sights, start, target)
-    return unless obst.empty?
+    return false unless obst.empty?
+
+    return false if friendly_fire?(piece.team, target)
 
     new_sights = line_of_sight(valid_targets(piece, target, target))
     check?(new_sights, piece.team)
@@ -275,8 +277,6 @@ class Board
     end
   end
 
-  # return pieces other than the target which are in the range of possible moves
-  # call this in #move with valid_targs as moves and confirming the target is valid
   def line_of_sight(moves)
     in_sights = moves
     in_sights.reverse_each do |pos|
@@ -284,12 +284,6 @@ class Board
       puts "#{pos}: #{piece.class}"
       in_sights.delete(pos) if piece.instance_of?(String)
     end
-    # think of a rook at [7, 7] moving to [7, 0]
-    # if there's a piece at [7, (0..6)] then the move is invalid
-    # get a list of spaces between start and target
-
-    # first, get all possible moves
-    # any pieces that are in the list of possible moves but aren't the target could be in the way and are in the line of sight
     puts "line of sight: #{in_sights}"
     in_sights
   end
@@ -329,8 +323,6 @@ class Board
       elsif piece.team == :black
         sights.delete(pos) if sights.index(start) <= sights.index(pos) && sights.index(pos) >= sights.index(target)
       end
-      # remove any pieces which come after the target index as they aren't on the way to the target
-      # assuming the piece is a queen moving diagonally all the way across the board, this trims nothing
     end
     sights.delete(target)
     sights.delete(start)
@@ -339,7 +331,6 @@ class Board
   end
 
   def check?(sights, team)
-    # in move, pass sights and piece.team
     sights.each do |pos|
       piece = @board[pos[1]][pos[0]]
       if piece.instance_of?(King) && piece.team != team
@@ -348,6 +339,13 @@ class Board
         true
       end
     end
+  end
+
+  def friendly_fire?(team, target)
+    target_piece = @board[target[1]][target[0]]
+    return false if target_piece == '_'
+
+    true if target_piece.team == team
   end
 
   def play
