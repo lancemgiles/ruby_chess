@@ -160,7 +160,7 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :check, :last_move
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :last_move
 
   def initialize
     intro
@@ -344,7 +344,7 @@ class Board
       piece = @board[pos[1]][pos[0]]
       if piece.instance_of?(King) && piece.team != team
         puts 'Check!'
-        @check = true
+        piece.check = true
         true
       end
     end

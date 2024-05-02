@@ -123,6 +123,13 @@ end
 
 # King
 class King < Piece
+  attr_accessor :check
+
+  def initialize(team, position)
+    super
+    @check = false
+  end
+
   def move_set
     [
       [0, 1],
