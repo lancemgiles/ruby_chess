@@ -99,13 +99,14 @@ module UI
     start_coord = [start_x, start_y]
     target_coord = [target_x, target_y]
     if valid_move?(piece, start_coord, target_coord)
+      @win = true if @board[target_y][target_x].instance_of?(King)
+      
       @board[target_y][target_x] = nil unless @board[target_y][target_x] == '_'
       @board[target_y][target_x] = piece
       @board[start_y][start_x] = '_'
       piece.position = target_coord
       piece.first_move = false if piece.instance_of?(Pawn)
       promote(piece) if piece.instance_of?(Pawn)
-      @last_move = piece
     else
       # change this eventually
       puts 'You entered an invalid move and now lose a turn!'
@@ -190,7 +191,7 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :last_move, :check
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :last_move, :check, :win
 
   def initialize
     intro
@@ -199,6 +200,7 @@ class Board
     @turn = 1
     @check = false
     @in_check = nil
+    @win = false
     @state = [@board, @units_b, @units_w, @turn, @check, @in_check]
     populate
     show_board
@@ -380,11 +382,16 @@ class Board
     true if target_piece.team == team
   end
 
+
+
   def play
     loop do
       move(input_coords, input_coords)
       @turn += 1
       update_game
+      if @win
+        abort "There is a winner!"
+      end
     end
   end
 end
