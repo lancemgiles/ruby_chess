@@ -63,6 +63,7 @@ module UI
     state[2] = @units_w
     state[3] = @turn
     state[4] = @check
+    state[5] = @in_check
   end
 
   def load
@@ -76,6 +77,7 @@ module UI
     @units_w = @state[2]
     @turn = @state[3]
     @check = @state[4]
+    @in_check = @state[5]
     update_game
   end
 
@@ -125,6 +127,9 @@ module UI
 
     new_sights = line_of_sight(valid_targets(piece, target, target))
     check?(new_sights, piece.team)
+    if @check == true && piece.team == @in_check
+      return valid_in_check(piece, start, target)
+    end
     true
   end
 
@@ -153,6 +158,29 @@ module UI
     valid_targs
   end
 
+  def valid_in_check(piece, start, target)
+    return false unless piece.instance_of?(King)
+
+    team = piece.team
+    enemy_moves = []
+    @board.each do |row|
+      row.each do |col|
+        next if col == '_'
+
+        next if col.team == team
+
+        enemy_moves.push(valid_move?(col, col.position, piece.position))
+      end
+    end
+    puts "enemy moves: #{enemy_moves}"
+    p enemy_moves.any?(true)
+    if enemy_moves.any?(true)
+      false
+    else
+      true
+    end
+  end
+
   def check_sl(start, target)
     input_coords if start.include?('save' || 'load')
     input_coords if target.include?('save' || 'load')
@@ -162,7 +190,7 @@ end
 # Gameboard
 class Board
   include UI
-  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :last_move
+  attr_accessor :board, :white, :black, :units_w, :units_b, :state, :turn, :last_move, :check
 
   def initialize
     intro
@@ -170,7 +198,8 @@ class Board
     @units_b = @units_w = {}
     @turn = 1
     @check = false
-    @state = [@board, @units_b, @units_w, @turn, @check]
+    @in_check = nil
+    @state = [@board, @units_b, @units_w, @turn, @check, @in_check]
     populate
     show_board
     return unless File.exist?('save.yml')
@@ -334,8 +363,11 @@ class Board
     sights.each do |pos|
       piece = @board[pos[1]][pos[0]]
       if piece.instance_of?(King) && piece.team != team
-        puts 'Check!'
         piece.check = true
+        @check = true
+        @in_check = :white if team == :black
+        @in_check = :black if team == :white
+        puts "#{@in_check} is in check!"
         true
       end
     end
